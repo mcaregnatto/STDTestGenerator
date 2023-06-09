@@ -262,6 +262,7 @@ class TestRequestApp(QWidget):
         modelo = self.model_selection.currentText()
         modelo_evcd = self.modelo_input.text()
         num_samples = self.num_samples.value()
+        entered_serial_numbers = []
 
         if not kind_test or not linha or not familia or not projeto or not modelo:
             QMessageBox.warning(self, 'Aviso', 'Preencha todos os campos obrigatórios')
@@ -291,6 +292,12 @@ class TestRequestApp(QWidget):
             if not ns:
                 QMessageBox.warning(self, 'Aviso', f'Preencha o campo N/S {i + 1}')
                 return
+                # Verificando se o número de série já foi inserido
+            if ns in entered_serial_numbers:
+                QMessageBox.warning(self, 'Aviso', f'Número de série repetido.')
+                return
+            else:
+                entered_serial_numbers.append(ns)
 
             
             #ABAIXO, DIRETÓRIO PC MATEUS
