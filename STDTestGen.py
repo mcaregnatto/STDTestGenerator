@@ -167,7 +167,7 @@ class TestRequestApp(QWidget):
         logo_label.setPixmap(logo)
         logo_label.setAlignment(Qt.AlignCenter)
 
-        developer_label = QLabel('developer: mcaregnatto - v1.0 (2023)')
+        developer_label = QLabel('developer: mcaregnatto - v1.2')
         developer_label.setAlignment(Qt.AlignCenter)
         developer_label.setStyleSheet('color: gray; font-size: 9px')
 
@@ -279,6 +279,10 @@ class TestRequestApp(QWidget):
             path = os.path.join(base_path, kind_test, linha, familia, projeto, modelo_evcd)
         
         os.makedirs(path, exist_ok=True)
+
+        # Adicionando a pasta vazia "sol_traco" + "-" + "Dados de teste"
+        test_data_folder = os.path.join(path, f"{sol_traco} - Dados de teste")
+        os.makedirs(test_data_folder, exist_ok=True)
 
         today = datetime.datetime.now().strftime('%Y%m%d')
 
