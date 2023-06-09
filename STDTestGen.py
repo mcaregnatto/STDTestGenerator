@@ -2,9 +2,9 @@ import sys
 import os
 import shutil
 import datetime
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, QSpinBox, QFileDialog, QMessageBox
-from PyQt5.QtCore import Qt, QRegExp
-from PyQt5.QtGui import QRegExpValidator, QPixmap
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, QSpinBox, QFileDialog, QMessageBox 
+from PyQt5.QtCore import Qt, QRegExp, QSize
+from PyQt5.QtGui import QRegExpValidator, QPixmap, QIcon
 import openpyxl
 
 class TestRequestApp(QWidget):
@@ -14,10 +14,12 @@ class TestRequestApp(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('STD Test Generator - Laboratório de Engenharia Midea Carrier')
-        self.setFixedSize(500, 700)
-
+        self.setWindowTitle('STD Test Generator')
+        self.setFixedSize(500, 600)
+        
         layout = QVBoxLayout()
+        layout.addSpacing(10)
+
 
         # Item 1
         self.sol_input = QLineEdit()
@@ -37,7 +39,7 @@ class TestRequestApp(QWidget):
         
         # adiciona um espaçador vertical de 10 pixels entre as linhas horizontais
         layout.addLayout(hbox1)
-        layout.addSpacing(1)
+        layout.addSpacing(10)
 
 
         # Item 1.1 - 1.4
@@ -124,38 +126,49 @@ class TestRequestApp(QWidget):
         layout.addLayout(hbox9)
 
         # Item 6
-        # define o método convert_to_upper
+        # define the method convert_to_upper
         def convert_to_upper(text, index):
-            # converte qualquer letra minúscula para maiúscula
+            # convert any lowercase letter to uppercase
             self.ns_inputs[index].setText(text.upper())
 
         self.ns_inputs = []
+        layout.addSpacing(10)
         for i in range(5):
             ns_input = QLineEdit()
-            ns_input.setFixedWidth(235)
-            ns_input.setPlaceholderText(f"N/S {str(i + 1)}")
+            ns_input.setFixedWidth(236)
+            ns_input.setPlaceholderText(f" N/S {str(i + 1)}")
             ns_input.hide()
-            # define o validador de expressão regular
+            # set the regular expression validator
             validator = QRegExpValidator(QRegExp("[A-Z0-9]*"), ns_input)
             ns_input.setValidator(validator)
-            # conecta o evento textChanged à função de conversão para maiúsculas
+            # connect the textChanged event to the uppercase conversion function
             ns_input.textChanged.connect(lambda text, i=i: convert_to_upper(text, i))
             self.ns_inputs.append(ns_input)
-            hbox = QHBoxLayout()
-            hbox.addWidget(QLabel(' '))
-            hbox.addWidget(ns_input)
-            layout.addLayout(hbox)
+            hbox10 = QHBoxLayout()
+            hbox10.addWidget(QLabel(' '))
+            hbox10.addWidget(self.ns_inputs[i])
+            layout.addLayout(hbox10)
+            self.setLayout(layout)
+            self.num_samples.valueChanged.connect(self.update_ns_inputs)
+            
 
-        self.num_samples.valueChanged.connect(self.update_ns_inputs)
-
+        # layout.addSpacing(500)
         # Item 7
-        create_button = QPushButton('CRIAR DOCUMENTOS DE TESTE')
+        layout.addSpacing(200)
+        create_button = QPushButton('CRIAR DOCUMENTOS DE TESTE  ')
         create_button.clicked.connect(self.create_folders_and_documents)
-        create_button.setStyleSheet('background-color: lightblue; font-weight: bold; height: 40px; width: 5px')
-        hbox10 = QHBoxLayout()
-        hbox10.addWidget(QLabel())
-        hbox10.addWidget(self.num_samples)
-        layout.addLayout(hbox9)
+        create_button.setStyleSheet('font-weight: bold; height: 35px; width: 210px')
+        # Set the icon for the button
+        icon_path = 'C:\\Users\\Mateus\\Documents\\Projetos\\STD Test Gen\\Engenharia de Produto - LAB\\01-Templates\\logo\\plus_doc.png'  # Replace with the path to your icon file
+        create_button.setIcon(QIcon(icon_path))
+        create_button.setIconSize(QSize(32, 32))  
+        hbox11 = QHBoxLayout()
+        hbox11.addStretch() 
+        hbox11.addWidget(create_button)
+        hbox11.addStretch() 
+        layout.addLayout(hbox11)
+
+
 
         # Logo
         #ABAIXO, DIRETÓRIO PC MATEUS
@@ -166,22 +179,21 @@ class TestRequestApp(QWidget):
         logo_label = QLabel()
         logo_label.setPixmap(logo)
         logo_label.setAlignment(Qt.AlignCenter)
+        hbox12 = QHBoxLayout()
+        hbox12.addStretch()  
+        hbox12.addWidget(logo_label)
+        hbox12.addStretch()  
+        layout.addLayout(hbox12)
 
         developer_label = QLabel('developer: mcaregnatto - v1.2')
         developer_label.setAlignment(Qt.AlignCenter)
         developer_label.setStyleSheet('color: gray; font-size: 9px')
+        hbox13 = QHBoxLayout()
+        hbox13.addStretch()  
+        hbox13.addWidget(developer_label)
+        hbox13.addStretch()  
+        layout.addLayout(hbox13)
 
-
-        for i in range(5):
-          
-            layout.addWidget(self.ns_inputs[i])
-
-        layout.addSpacing(500)
-        layout.addWidget(create_button)
-        layout.addWidget(logo_label)
-        layout.addWidget(developer_label)
-
-        self.setLayout(layout)
 
     def insert_slash(self, text):
         if len(text) == 3 and not text.endswith('/'):
